@@ -1,0 +1,22 @@
+cmake_minimum_required(VERSION 3.20)
+project(lhs)
+
+set(CMAKE_C_STANDARD 99)
+set(CMAKE_CXX_STANDARD 11)
+
+include_directories(src)
+
+add_executable(lhs main.cpp)
+target_sources(lhs PUBLIC "src/HttpServer.h")
+target_sources(lhs PUBLIC "src/HttpServer.cpp")
+target_sources(lhs PUBLIC "src/model/HttpRequest.h")
+target_sources(lhs PUBLIC "src/model/HttpRequest.cpp")
+target_sources(lhs PUBLIC "src/model/HttpResponse.h")
+target_sources(lhs PUBLIC "src/model/HttpResponse.cpp")
+target_sources(lhs PUBLIC "src/model/HttpException.h")
+target_sources(lhs PUBLIC "src/model/HttpException.cpp")
+target_sources(lhs PUBLIC "src/container/SafeQueue.h")
+target_sources(lhs PUBLIC "src/threadPool/ThreadPool.h")
+target_sources(lhs PUBLIC "src/threadPool/ThreadPool.cpp")
+target_sources(lhs PUBLIC "src/container/HttpHandlerMap.h")
+target_sources(lhs PUBLIC "src/container/HttpHandlerMap.cpp")

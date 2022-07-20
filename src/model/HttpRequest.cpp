@@ -67,7 +67,7 @@ int HttpRequest::parseHttpHead_requestLine(const char *a_line)
     //读method
     while (a_line[p] != '\0')
     {
-        if (a_line[p] == ' ')   //发现空格进入下一请求参数读取
+        if (a_line[p] == ' ')   //发现空格，进入Url_Path读取
         {
             part_flag++;
             p++;
@@ -85,7 +85,7 @@ int HttpRequest::parseHttpHead_requestLine(const char *a_line)
             p++;
             break;
         }
-        if (a_line[p] == ' ')   //发现空格进入下一请求参数读取
+        if (a_line[p] == ' ')   //发现空格，进入HttpVersion读取
         {
             part_flag++;
             break;
@@ -97,7 +97,7 @@ int HttpRequest::parseHttpHead_requestLine(const char *a_line)
     std::string K, V;
     while (a_line[p] != '\0')   //逐字处理
     {
-        if (a_line[p] == ' ')
+        if (a_line[p] == ' ')   //发现空格，进入HttpVersion读取
         {
             p++;
             break;
@@ -138,15 +138,12 @@ int HttpRequest::parseHttpHead_requestLine(const char *a_line)
 /**
  * 解析HTTP请求头（请求参数部分）
  * @param a_line 一行HTTP报文
- * @return 若解析成功则返回0，否则返回-1
+ * @return 若解析成功且解析到参数则返回0，若解析成功但未解析到参数则返回1，解析失败则返回-1
  */
 int HttpRequest::parseHttpHead_requestParams(const char *a_line)
 {
     int p = 0;          //总指针
-    int p_in = 0;       //请求参数str内指针
-    char *parts[2];     //请求参数str组
-    for (auto &it: parts)
-        it = (char *) (calloc(512, sizeof(char)));
+    std::string K, V;   //请求参数str组
 
     //逐字处理（K部分）
     while (a_line[p] != '\0')
@@ -154,32 +151,24 @@ int HttpRequest::parseHttpHead_requestParams(const char *a_line)
         //遇到第一个冒号，跳过两个字符，进入Value部分
         if (a_line[p] == ':')
         {
-            parts[0][p_in] = '\0';
-            p_in = 0;
+            K += '\0';
             p += 2;
             break;
         }
-        parts[0][p_in] = a_line[p];
-        p_in++;
+        K += a_line[p];
         p++;
     }
     //逐字处理（V部分）
     while (a_line[p] != '\0')
     {
-        parts[1][p_in] = a_line[p];
-        p_in++;
+        V += a_line[p];
         p++;
     }
 
-    std::string K(parts[0]);
-    std::string V(parts[1]);
-    if (K.empty() && V.empty()) return 1;   //Param段已结束
+    if (K.empty() && V.empty()) return 1;   //未读取到参数KV对，Param段已结束
     else if (K.empty() || V.empty()) return -1;
 
     parameters.insert({K, V});
-
-    for (auto &it: parts)
-        free(it);
 
     return 0;
 }

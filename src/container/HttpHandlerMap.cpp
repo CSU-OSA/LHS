@@ -24,9 +24,6 @@ HttpResponse *HttpHandlerMap::handle(const HttpRequest *request)
         transform(method_upper.begin(), method_upper.end(), method_upper.begin(),
                   [](unsigned char c) { return toupper(c); });
 
-        std::string K = request->URL_path + "::" + method_upper;
-        printf("Received Request > K: %s\n", K.c_str());
-
         std::function<HttpResponse *(const HttpRequest *)> handler = handler_map.at(request->URL_path + "::" + method_upper);
         response = handler(request);
     } catch (std::out_of_range &e)

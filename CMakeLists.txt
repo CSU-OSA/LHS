@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(lhs)
+project(lhs_Sample)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
@@ -9,17 +9,24 @@ set(CMAKE_CXX_STANDARD 11)
 
 include_directories(src)
 
-add_executable(lhs main.cpp)
-target_sources(lhs PUBLIC "src/HttpServer.h")
-target_sources(lhs PUBLIC "src/HttpServer.cpp")
-target_sources(lhs PUBLIC "src/model/HttpRequest.h")
-target_sources(lhs PUBLIC "src/model/HttpRequest.cpp")
-target_sources(lhs PUBLIC "src/model/HttpResponse.h")
-target_sources(lhs PUBLIC "src/model/HttpResponse.cpp")
-target_sources(lhs PUBLIC "src/model/HttpException.h")
-target_sources(lhs PUBLIC "src/model/HttpException.cpp")
-target_sources(lhs PUBLIC "src/container/SafeQueue.h")
-target_sources(lhs PUBLIC "src/threadPool/ThreadPool.h")
-target_sources(lhs PUBLIC "src/threadPool/ThreadPool.cpp")
-target_sources(lhs PUBLIC "src/container/HttpHandlerMap.h")
-target_sources(lhs PUBLIC "src/container/HttpHandlerMap.cpp")
+add_library(lhs SHARED
+        src/container/HttpHandlerMap.cpp
+        src/container/HttpHandlerMap.h
+        src/container/SafeQueue.h
+        src/model/HttpException.cpp
+        src/model/HttpException.h
+        src/model/HttpRequest.cpp
+        src/model/HttpRequest.h
+        src/model/HttpResponse.cpp
+        src/model/HttpResponse.h
+        src/threadPool/ThreadPool.cpp
+        src/threadPool/ThreadPool.h
+        src/HttpServer.cpp
+        src/HttpServer.h)
+
+set_target_properties(lhs PROPERTIES VERSION 1.0.0)
+
+add_executable(lhs_test main.cpp)
+
+target_link_libraries(lhs_test lhs)
+

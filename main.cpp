@@ -1,6 +1,6 @@
-#include "src/model/HttpRequest.h"
-#include "src/model/HttpResponse.h"
-#include "HttpServer.h"
+#include <model/HttpRequest.h>
+#include <model/HttpResponse.h>
+#include <server/HttpServer.h>
 
 int main(int argc, char *argv[])
 {

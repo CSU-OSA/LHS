@@ -7,26 +7,26 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_CXX_STANDARD 11)
 
+# include header files of lib
 include_directories(src)
+include_directories(include)
 
-add_library(lhs SHARED
-        src/container/HttpHandlerMap.cpp
-        src/container/HttpHandlerMap.h
-        src/container/SafeQueue.h
-        src/model/HttpException.cpp
-        src/model/HttpException.h
-        src/model/HttpRequest.cpp
-        src/model/HttpRequest.h
-        src/model/HttpResponse.cpp
-        src/model/HttpResponse.h
-        src/threadPool/ThreadPool.cpp
-        src/threadPool/ThreadPool.h
-        src/HttpServer.cpp
-        src/HttpServer.h)
+# link ddl in ./lib
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib/gtest)
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib/gmock)
 
-set_target_properties(lhs PROPERTIES VERSION 1.0.0)
+# main executable
+add_subdirectory(src)
+add_executable(lhs ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
 
-add_executable(lhs_test main.cpp)
+# link env lib
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+target_link_libraries(lhs PUBLIC Threads::Threads)
 
-target_link_libraries(lhs_test lhs)
+# link static lib
+target_link_libraries(lhs PUBLIC container model server thread_pool)
 
+# test configuration
+enable_testing()
+add_subdirectory(test)

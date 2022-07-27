@@ -1,36 +1,53 @@
 #include "UrlParams.h"
 
 UrlParams::UrlParams() {
-    head_ptr = new Node();
-    tail_ptr = head_ptr;
+    size_ = 0;
+    freezed_ = false;
+    head_ptr_ = new Node();
+    tail_ptr_ = head_ptr_;
 }
 
 UrlParams::UrlParams(UrlParams&& another) {
-    head_ptr = another.head_ptr;
-    tail_ptr = another.tail_ptr;
-    another.head_ptr = nullptr;
-    another.tail_ptr = nullptr;
+    size_ = another.size_;
+    freezed_ = another.freezed_;
+    head_ptr_ = another.head_ptr_;
+    tail_ptr_ = another.tail_ptr_;
+    another.head_ptr_ = nullptr;
+    another.tail_ptr_ = nullptr;
 }
 
 UrlParams::~UrlParams() {
-    _release_after(head_ptr);
-    tail_ptr = nullptr;
+    _release_after(head_ptr_);
+    tail_ptr_ = nullptr;
 }
 
 UrlParams::Iterator UrlParams::begin() const {
-    return UrlParams::Iterator(head_ptr->next);
+    return UrlParams::Iterator(head_ptr_->next);
 }
 
 UrlParams::Iterator UrlParams::end() const {
-    return UrlParams::Iterator(tail_ptr->next);
+    return UrlParams::Iterator(tail_ptr_->next);
 }
 
 void UrlParams::push_back(const std::string& val) {
-    tail_ptr->next = new Node(val);
-    tail_ptr = tail_ptr->next;
+    _freezed_guard();
+    size_++;
+    tail_ptr_->next = new Node(val);
+    tail_ptr_ = tail_ptr_->next;
 }
 
-inline void UrlParams::_release_after(Node* ptr) {
+void UrlParams::clear() {
+    _freezed_guard();
+    _release_after(head_ptr_->next);
+    head_ptr_->next = nullptr;
+    tail_ptr_ = head_ptr_;
+}
+
+void UrlParams::freeze() {
+    freezed_ = true;
+}
+
+void UrlParams::_release_after(Node* ptr) {
     Node *p, *q = ptr;
     while (q != nullptr)
     {
@@ -40,16 +57,24 @@ inline void UrlParams::_release_after(Node* ptr) {
     } 
 }
 
-void UrlParams::clear() {
-    _release_after(head_ptr->next);
-    head_ptr->next = nullptr;
-    tail_ptr = head_ptr;
+inline bool UrlParams::empty() const {
+    return size_ == 0;
 }
 
-bool UrlParams::empty() const {
-    return head_ptr == tail_ptr;
+inline bool UrlParams::operator==(const UrlParams& another) const {
+    return head_ptr_ == another.head_ptr_;
 }
 
-bool UrlParams::operator==(const UrlParams& another) const {
-    return head_ptr == another.head_ptr;
+inline size_t UrlParams::size() const {
+    return size_;
+}
+
+inline bool UrlParams::is_freezed() const {
+    return freezed_;
+}
+
+void UrlParams::_freezed_guard() const {
+    if (freezed_) {
+       throw std::logic_error("attempting to modify freezed UrlParams"); 
+    }
 }

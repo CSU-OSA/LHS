@@ -2,6 +2,7 @@
 // Created by OctAutumn on 2022/7/4.
 //
 
+#include <stdio.h>
 #include "HttpRequest.h"
 
 HttpRequest::HttpRequest(const char *httpMsg_Str)
@@ -121,21 +122,29 @@ int HttpRequest::parseHttpHead_requestLine(const char *a_line)
         }
         if (K.empty() || V.empty()) return -1;
 
-        auto pos =K.find("[]");
+        auto pos = K.find("[]");
+        auto is_arr = pos < K.length();
 
-        if(pos < K.length()) {
+        if (is_arr) {
             K.erase(pos,2);
         }
 
         auto iter = URL_parameters.find(K);
+        auto is_found = iter != URL_parameters.end();
 
-        if ( iter != URL_parameters.end() ) {
+        if (is_arr && is_found) {
             iter->second.push_back(V);
-        } else {
-            UrlParams parameter;
-            parameter.push_back(V);
-            URL_parameters.emplace(K, std::move(parameter));
+            continue;
         }
+
+        if(!is_arr && is_found) {
+            printf("> [E] reading url parameters fail. Is there duplicated keys?");
+            continue;
+        }
+
+        UrlParams parameter;
+        parameter.push_back(V);
+        URL_parameters.emplace(K, std::move(parameter));
     }
 
     //读version

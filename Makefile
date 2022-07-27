@@ -21,4 +21,3 @@ again: $(PROGRAM_NAME)
 
 clean : 
 	rm -rf build; \
-	rm -rf debug;

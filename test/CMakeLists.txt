@@ -12,6 +12,7 @@ include(GoogleTest)
 gtest_discover_tests(${BINARY})
 
 target_link_libraries(${BINARY} PUBLIC
+    container    
     gtest
     gmock
     pthread

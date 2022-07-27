@@ -9,13 +9,15 @@
 #include <cstring>
 #include <unordered_map>
 #include "HttpException.h"
+#include <container/UrlParams.h>
 
 class HttpRequest
 {
 public:
+
     std::string method;
     std::string URL_path;
-    std::unordered_map<std::string, std::string> URL_parameters;
+    std::unordered_map<std::string, UrlParams> URL_parameters;
     std::string version;
     std::unordered_map<std::string, std::string> parameters;
     std::string context;

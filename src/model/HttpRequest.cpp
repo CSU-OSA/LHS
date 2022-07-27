@@ -115,9 +115,29 @@ int HttpRequest::parseHttpHead_requestLine(const char *a_line)
             V += a_line[p];
             p++;
         }
+        if (a_line[p] == '&')
+        {
+            p++;
+        }
         if (K.empty() || V.empty()) return -1;
-        URL_parameters.insert({K, V});
+
+        auto pos =K.find("[]");
+
+        if(pos < K.length()) {
+            K.erase(pos,2);
+        }
+
+        auto iter = URL_parameters.find(K);
+
+        if ( iter != URL_parameters.end() ) {
+            iter->second.push_back(V);
+        } else {
+            UrlParams parameter;
+            parameter.push_back(V);
+            URL_parameters.emplace(K, std::move(parameter));
+        }
     }
+
     //读version
     while (a_line[p] != '\0')
     {

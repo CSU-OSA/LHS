@@ -8,8 +8,8 @@ $(PROGRAM_NAME) :
 	cmake ..
 	$(MAKE) -C build
 
-run: $(PROGRAM_NAME)
-	./build/$(PROGRAM_NAME) 0.0.0.0 2207
+run : $(PROGRAM_NAME)
+	./build/$(PROGRAM_NAME) 0.0.0.0 8080
 
 test: $(PROGRAM_NAME)
 	cd build ;\
@@ -20,4 +20,4 @@ again: $(PROGRAM_NAME)
 	ctest . --rerun-failed --output-on-failure
 
 clean : 
-	rm -rf build; \
+	rm -rf build

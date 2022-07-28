@@ -82,16 +82,27 @@ public:
     UrlParams(const UrlParams&) = delete;
     UrlParams(UrlParams&&);
     ~UrlParams();
-    Iterator begin() const;
-    Iterator end() const;
     void push_back(const std::string& val);
     void clear();
-    bool empty() const;
-    bool operator==(const UrlParams& another) const;
+    /**
+     * @brief after freeze, UrlParams can't be modified.
+     * 
+     * @details any non-const method will raise exception if UrlParams have benn freezed.
+     */
+    void freeze();
+    inline bool is_freezed() const;
+    Iterator begin() const;
+    Iterator end() const;
+    inline bool empty() const;
+    inline size_t size() const;
+    inline bool operator==(const UrlParams& another) const;
 private:
-    inline void _release_after(Node* ptr);
-    Node* head_ptr;
-    Node* tail_ptr;
+    void _release_after(Node* ptr);
+    void _freezed_guard() const;
+    size_t size_;
+    bool freezed_;
+    Node* head_ptr_;
+    Node* tail_ptr_;
 };
 
 
